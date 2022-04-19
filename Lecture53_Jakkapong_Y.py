@@ -1,6 +1,4 @@
-def vatCalculate(price) :
-    total = price + (price * 7/100)
+def vatCaculate(price) :
+    total = price + (price * 7/10)
     return total
-
-print(vatCalculate(input(int("Price : "))))
-
+print(vatCaculate(int(input("Price : "))))
