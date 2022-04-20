@@ -9,11 +9,12 @@ def login() :
         login()
 
 def showMenu():
-	print("---Bubblegums Shop---")
-	print("1. Vat Calculator")
-	print("2. Total Price Calculator")
-	userSelect = str(input("Enter the Menu : "))
-	return funtion(userSelect)
+    print("---Bubblegums Shop---")
+    print("1. Vat Calculator")
+    print("2. Total Price Calculator")
+    print("3. Exit")
+    userSelect = str(input("Enter the Menu : "))
+    return funtion(userSelect)
 
 def funtion(userSelect) :
     while userSelect != "0":
@@ -23,6 +24,8 @@ def funtion(userSelect) :
         elif userSelect == "2":
             countItem = int(input("How many Item? : "))
             return priceCaculate(countItem)
+        elif userSelect == "3":
+            exit()
         else:
             print("Try again")
             showMenu()
