@@ -17,7 +17,7 @@ def billlist() :
     total = 0
     print("---- My food ----")
     for i in range(len(menu)) :
-        print(i+1, menu[i], price[i])
+        print(i+1, ".)", menu[i], price[i])
     for x in range(len(menu)) :
         total += price[x]
     print("Total :", total)
