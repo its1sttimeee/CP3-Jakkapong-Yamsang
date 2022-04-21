@@ -9,7 +9,7 @@ def login() :
         login()
 
 def showMenu():
-    print("Bubblegums Shop".center( 30 , "-"))
+    print("Bubblegums Shop".center(30, "-"))
     print("1. Vat Calculator")
     print("2. Total Price Calculator")
     print("3. Exit")
