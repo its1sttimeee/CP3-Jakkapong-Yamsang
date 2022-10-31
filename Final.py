@@ -5,8 +5,8 @@ import sys
 pygame.init()
 
 #กำหนดสี
-White = (240,255,255)
-Red = (220,20,60)
+p_color = (240,255,255)
+e_color = (220,20,60)
 BG_Cl = (0,0,0)
 
 #กำหนดขนาดเกม
@@ -47,7 +47,7 @@ def drop_enemies(e_list):
 #ฟังก์ชันทำให้เห็นอุปสรรค
 def appear_enemies(e_list):
 	for e_pos in e_list:
-		pygame.draw.rect(show, Red, (e_pos[0], e_pos[1], e_size, e_size))
+		pygame.draw.rect(show, e_color, (e_pos[0], e_pos[1], e_size, e_size))
 
 def enemy_pos(e_list, score):
 	for idx, e_pos in enumerate(e_list):
@@ -107,9 +107,9 @@ while not Lose:
 		break
 
 	appear_enemies(e_list)
-
-	pygame.draw.rect(show, White, (p_pos[0], p_pos[1], p_size, p_size))
-
 	clock.tick(40)
+	pygame.draw.rect(show, p_color, (p_pos[0], p_pos[1], p_size, p_size))
+
+
 
 	pygame.display.update()
