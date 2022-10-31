@@ -1,41 +1,114 @@
-from tkinter import *
-def calculateBMI(event):
-    h = float(textbox_height.get())
-    h = h/100
-    w = float(textbox_wight.get())
-    bmi = w / (h**2)
-    bmi = round(bmi, 1)
-    statlist = ["Under Weight","Normal Weight","Over Weight","Obesity"]
-    stat = 0
-    if bmi <= 18.5 :
-        stat = statlist[0]
-    elif bmi < 25 :
-        stat = statlist[1]
-    elif bmi < 30 :
-        stat = statlist[2]
-    else :
-        stat = statlist[3]
-    total.configure(text=stat)
+import pygame
+import random
+import sys
+
+pygame.init()
+
+#กำหนดขนาดเกม
+W = 800
+H = 600
+
+#กำหนดสี
+White = (240,255,255)
+Red = (220,20,60)
+YELLOW = (255,255,0)
+BG_Cl = (0,0,0)
+
+player_size = 50
+player_pos = [400, 500]
+
+e_size = 25
+e_pos = [random.randint(0,775), 0]
+e_list = [e_pos]
+
+SPEED = 10
+
+screen = pygame.display.set_mode((W, H))
+
+Lose = False
+
+score = 0
+
+clock = pygame.time.Clock()
+
+myFont = pygame.font.SysFont("monospace", 35)
+
+
+
+#สร้างอุปสรรคโดยการสุ่มเกิด
+def drop_enemies(e_list):
+	delay = random.random()
+	if len(e_list) < 10 and delay < 0.1:
+		x_pos = random.randint(0,775)
+		y_pos = 0
+		e_list.append([x_pos, y_pos])
+
+#ฟังก์ชันทำให้เห็นอุปสรรค
+def appear_enemies(e_list):
+	for e_pos in e_list:
+		pygame.draw.rect(screen, Red, (e_pos[0], e_pos[1], e_size, e_size))
+
+def enemy_pos(e_list, score):
+	for idx, e_pos in enumerate(e_list):
+		if e_pos[1] >= 0 and e_pos[1] < H:
+			e_pos[1] += SPEED
+		else:
+			e_list.pop(idx)
+			score += 1
+	return score
+
+def collision_check(e_list, player_pos):
+	for e_pos in e_list:
+		if detect_collision(e_pos, player_pos):
+			return True
+	return False
+
+def detect_collision(player_pos, e_pos):
+	player_x = player_pos[0]
+	player_y = player_pos[1]
+
+	e_x = e_pos[0]
+	e_y = e_pos[1]
+
+	if (e_x >= player_x and e_x < (player_x + player_size)) or (player_x >= e_x and player_x < (e_x+e_size)):
+		if (e_y >= player_y and e_y < (player_y + player_size)) or (player_y >= e_y and player_y < (e_y+e_size)):
+			return True
+	return False
+
+while not Lose:
+
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			sys.exit()
+
+		if event.type == pygame.KEYDOWN:
+
+			x = player_pos[0]
+			y = player_pos[1]
+
+			if event.key == pygame.K_LEFT:
+				x -= player_size
+			elif event.key == pygame.K_RIGHT:
+				x += player_size
+
+			player_pos = [x,y]
+
+	screen.fill(BG_Cl)
+
+	drop_enemies(e_list)
+	score = enemy_pos(e_list, score)
 
 
 
 
-window = Tk()
-label_main = Label(window,text = "BMI Caculator",font=50,width=15 ).grid(row = 0, column=2)
+	if collision_check(e_list, player_pos):
+		game_over = True
+		break
 
-label_height = Label(window, text = "Height (cm.)",font=20 ,width = 10).grid(row=1,column=1)
-textbox_height = Entry(window, width=20)
-textbox_height.grid(row=1,column=2)
+	appear_enemies(e_list)
 
-label_wight = Label(window, text="Wight (kg.)",font=20, width=10).grid(row=2, column=1)
-textbox_wight = Entry(window, width=20)
-textbox_wight.grid(row=2, column=2)
+	pygame.draw.rect(screen, White, (player_pos[0], player_pos[1], player_size, player_size))
 
-calculateButton = Button(window,text="Check BMI")
-calculateButton.grid(row=3, column=1)
-calculateButton.bind('<Button-1>', calculateBMI)
+	clock.tick(30)
 
-total = Label(window, text="", font=20, width=15)
-total.grid(row=3, column=2)
-
-window.mainloop()
+	pygame.display.update()
