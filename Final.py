@@ -4,14 +4,16 @@ import sys
 
 pygame.init()
 
-#กำหนดขนาดเกม
-W = 750
-H = 550
-
 #กำหนดสี
 White = (240,255,255)
 Red = (220,20,60)
 BG_Cl = (0,0,0)
+
+#กำหนดขนาดเกม
+W = 750
+H = 550
+
+
 
 p_size = 50
 p_pos = [400, 500]
@@ -20,7 +22,7 @@ e_size = 30
 e_pos = [random.randint(0,775), 0]
 e_list =[e_pos]
 
-SPEED = 15
+
 
 show = pygame.display.set_mode((W, H))
 
@@ -32,7 +34,7 @@ clock = pygame.time.Clock()
 
 
 
-
+SPEED = 15
 
 #สร้างอุปสรรคโดยการสุ่มเกิด
 def drop_enemies(e_list):
