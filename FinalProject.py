@@ -1,115 +1,69 @@
-import pygame
-import random
-import sys
+from tkinter import *
+from forex_python.converter import CurrencyRates
+from forex_python.bitcoin import BtcConverter
 
-pygame.init()
+b = BtcConverter()
+b.get_latest_price('USD')
 
-#กำหนดสี
-p_color = (240,255,255)
-e_color = (220,20,60)
-BG_Cl = (0,0,0)
+c = CurrencyRates()
+c.get_rates('USD')
 
-#กำหนดขนาดเกม
-W = 750
-H = 550
+currency = c.get_rates('USD')
 
+def click(event):
+    amount = float(info.get())
+    input_currency1 = input_currency.get()
+    totalBTC = round(b.convert_to_btc(amount, input_currency1 ),2)
 
-
-p_size = 50
-p_pos = [400, 500]
-
-e_size = 30
-e_pos = [random.randint(0,775), 0]
-e_list =[e_pos]
+    totalBTC_output.configure(text=totalBTC)
 
 
+def getcurrency_list(currency):
+    currency_list = ['USD']
+    for key in currency.keys():
+        currency_list.append(key)
+    return currency_list
 
-show = pygame.display.set_mode((W, H))
+currency_list = getcurrency_list(currency)
 
-Lose = False
+#Tk
+mainwindow = Tk()
+mainwindow.geometry('400x400')
+#Header
+label_header = Label(mainwindow, text= "โปรแกรมแปลงค่าเป็นสกุลBTC",font = ("Angsana New",17) )
+label_header.grid(row = 0,columnspan=3,ipadx=15,ipady=15)
 
-score = 0
+#Lebel
+label_input = Label(mainwindow, text = "สกุลเงินต้นทาง",font=("Angsana New",12))
+label_input.grid(row = 2 ,column= 0,padx=5,pady=5)
+label_symbol2 = Label(mainwindow, text = "===>",font=("Angsana New",20))
+label_symbol2.grid(row=4 ,column=1,padx=5 ,pady=5)
+label_btc = Label(mainwindow, text = "สกุลBTC",font=("Angsana New",12))
+label_btc.grid(row=2, column=2,padx=5,pady=5)
 
-clock = pygame.time.Clock()
+#choose Currency
+input_currency = StringVar(mainwindow)
+input_currency.set(currency_list[0])
+dropdown_first_currency = OptionMenu(mainwindow, input_currency, *currency_list)
+dropdown_first_currency.grid(row=3, column=0, padx=5, pady=10)
 
+btc_button = StringVar(mainwindow)
+btc_button.set("BTC")
+dropdown_second_currency = OptionMenu(mainwindow, btc_button, "BTC")
+dropdown_second_currency.grid(row=3,column =2,padx=5,pady=10)
 
+#Receive info
+info = Entry(mainwindow, justify=('center'))
+info.grid(row = 4,column=0,padx=5,pady=5)
 
-SPEED = 15
+#Button
+calculateButton = Button(mainwindow,text="Calculate",width=20)
+calculateButton.grid(row=5, column=1)
+calculateButton.bind('<Button-1>',click )
 
-#สร้างอุปสรรคโดยการสุ่มเกิด
-def drop_enemies(e_list):
-	delay = random.random()
-	if len(e_list) < 10 and delay < 0.1:
-		x_pos = random.randint(0,775)
-		y_pos = 0
-		e_list.append([x_pos, y_pos])
-
-#ฟังก์ชันทำให้เห็นอุปสรรค
-def appear_enemies(e_list):
-	for e_pos in e_list:
-		pygame.draw.rect(show, e_color, (e_pos[0], e_pos[1], e_size, e_size))
-
-def enemy_pos(e_list, score):
-	for idx, e_pos in enumerate(e_list):
-		if e_pos[1] >= 0 and e_pos[1] < H:
-			e_pos[1] += SPEED
-		else:
-			e_list.pop(idx)
-			score += 1
-	return score
-
-def collision_check(e_list, p_pos):
-	for e_pos in e_list:
-		if detect_collision(e_pos, p_pos):
-			return True
-	return False
-
-def detect_collision(p_pos,e_pos):
-	player_x = p_pos[0]
-	player_y = p_pos[1]
-
-	e_x = e_pos[0]
-	e_y = e_pos[1]
-
-	if (e_x >= player_x and e_x < (player_x + p_size)) or (player_x >= e_x and player_x < (e_x + e_size)):
-		if (e_y >= player_y and e_y < (player_y + p_size)) or (player_y >= e_y and player_y < (e_y + e_size)):
-			return  True
-	return False
-
-while not Lose:
-
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			sys.exit()
-
-		if event.type == pygame.KEYDOWN:
-
-			x = p_pos[0]
-			y = p_pos[1]
-
-			if event.key == pygame.K_LEFT:
-				x -= p_size
-			elif event.key == pygame.K_RIGHT:
-				x += p_size
-
-			p_pos = [x,y]
-
-	show.fill(BG_Cl)
-
-	drop_enemies(e_list)
-	score = enemy_pos(e_list, score)
+#Total
+totalBTC_output = Label(mainwindow, text="ผลลัพธ์")
+totalBTC_output.grid(row=4,column=2)
 
 
-
-
-	if collision_check(e_list, p_pos):
-		game_over = True
-		break
-
-	appear_enemies(e_list)
-	clock.tick(40)
-	pygame.draw.rect(show, p_color, (p_pos[0], p_pos[1], p_size, p_size))
-
-
-
-	pygame.display.update()
+mainwindow.mainloop()
